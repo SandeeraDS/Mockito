@@ -2,6 +2,7 @@ package com.ds;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -85,5 +86,49 @@ public class TodoBusinessImplMockTest {
 
         //verify(todoServiceMock,times(1)).deleteTodo("Learn to Dance"); // success
         then(todoServiceMock).should(times(1)).deleteTodo("Learn to Dance");
+    }
+
+    @Test
+    void deleteTodosNotRelatedToSpring_ArgumentCapture(){
+
+        // Declare Argument Captor
+        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        // Define Argument Captor on specific method call
+        // Capture the argument
+
+        // Given
+        TodoService todoServiceMock = mock(TodoService.class);
+        List<String> todos = Arrays.asList("Learn Spring MVC","Learn Spring","Learn to Dance");
+        given(todoServiceMock.retrieveTodos("dummy")).willReturn(todos);
+        TodoBusinessImpl todoBusiness = new TodoBusinessImpl(todoServiceMock);
+
+        // When
+        todoBusiness.deleteTodosNotRelatedToSpring("dummy");
+
+        // Then
+        then(todoServiceMock).should().deleteTodo(stringArgumentCaptor.capture());
+        assertEquals(stringArgumentCaptor.getValue(),"Learn to Dance");
+    }
+
+    @Test
+    void deleteTodosNotRelatedToSpring_ArgumentCaptureMultipleTimes(){
+
+        // Declare Argument Captor
+        ArgumentCaptor<String> stringArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        // Define Argument Captor on specific method call
+        // Capture the argument
+
+        // Given
+        TodoService todoServiceMock = mock(TodoService.class);
+        List<String> todos = Arrays.asList("Learn to Rock and Roll","Learn Spring","Learn to Dance");
+        given(todoServiceMock.retrieveTodos("dummy")).willReturn(todos);
+        TodoBusinessImpl todoBusiness = new TodoBusinessImpl(todoServiceMock);
+
+        // When
+        todoBusiness.deleteTodosNotRelatedToSpring("dummy");
+
+        // Then
+        then(todoServiceMock).should(times(2)).deleteTodo(stringArgumentCaptor.capture());
+        assertEquals(stringArgumentCaptor.getAllValues().size(),2);
     }
 }
