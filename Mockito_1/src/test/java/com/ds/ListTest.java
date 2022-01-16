@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -53,5 +54,18 @@ public class ListTest {
         when(listMock.get(anyInt())).thenThrow(new RuntimeException("Something"));
 
         assertThrows(RuntimeException.class,()->listMock.get(0));
+    }
+
+    @Test
+    void letsMockListGetMethod_UsingBDD(){
+        // Given
+        List<String> listMock = mock(List.class);
+        given(listMock.get(0)).willReturn("Sandeera");
+
+        // When
+        String actual = listMock.get(0);
+
+        // Then
+        assertEquals("Sandeera",actual);
     }
 }
