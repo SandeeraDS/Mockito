@@ -8,8 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class TodoBusinessImplMockTest {
 
@@ -39,5 +38,28 @@ public class TodoBusinessImplMockTest {
 
         // Then
         assertEquals(2,filteredList.size());
+    }
+
+    @Test
+    void deleteTodosNotRelatedToSpring_UsingBDD(){
+
+        // Given
+        TodoService todoServiceMock = mock(TodoService.class);
+        List<String> todos = Arrays.asList("Learn Spring MVC","Learn Spring","Learn to Dance");
+        given(todoServiceMock.retrieveTodos("dummy")).willReturn(todos);
+        TodoBusinessImpl todoBusiness = new TodoBusinessImpl(todoServiceMock);
+
+        // When
+        todoBusiness.deleteTodosNotRelatedToSpring("dummy");
+
+        // Then
+        verify(todoServiceMock).deleteTodo("Learn to Dance"); // success
+        //verify(todoServiceMock).deleteTodo("Learn Spring"); // failed
+
+        //verify(todoServiceMock,never()).deleteTodo("Learn to Dance"); // failed
+        verify(todoServiceMock,never()).deleteTodo("Learn Spring"); // success
+
+        verify(todoServiceMock,times(1)).deleteTodo("Learn to Dance"); // success
+        //verify(todoServiceMock,times(2)).deleteTodo("Learn to Dance"); // failed
     }
 }
